@@ -18,26 +18,5 @@ spec:
     configs:
       params:
         server.insecure: true
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: argocd-server
-  namespace: argocd
-spec:
-  entryPoints:
-    - web
-  routes:
-    - kind: Rule
-      match: Host(`k3s.local`)
-      priority: 10
-      services:
-        - name: argocd-server
-          port: 80
-    - kind: Rule
-      match: Host(`k3s.local`) && Header(`Content-Type`, `application/grpc`)
-      priority: 11
-      services:
-        - name: argocd-server
-          port: 80
-          scheme: h2c
+
+      

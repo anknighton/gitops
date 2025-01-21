@@ -1,0 +1,32 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: default
+  namespace: argocd
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`argocd.192.168.1.15.nip.io`) 
+      priority: 10
+      services:
+        - name: argocd-server
+          port: 80
+          namespace: argocd
+    - kind: Rule
+      match: Host(`argocd.192.168.1.15.nip.io`) && Header(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: 80
+          namespace: argocd
+          scheme: h2c
+    - kind: Rule
+      match: Host(`plex.192.168.1.15.nip.io`)
+      priority: 12
+      services:
+        - name: plex-media-server
+          port: 32400
+          namespace: plex
