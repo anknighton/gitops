@@ -8,8 +8,14 @@ extraEnv:
 extraVolumes:
   - name: nfs-vol
     nfs:
-      server: 192.168.1.5 # IP to our NFS server
-      path: /Pool/Media # The exported directory
+      server: 192.168.1.5 
+      path: /Pool/Media 
+  - name: config
+    nfs:
+      server: 192.168.1.5
+      path: /Pool/configs/plex
 extraVolumeMounts:
   - name: nfs-vol
     mountPath: /media
+  - name: config
+    mountPath: /config
