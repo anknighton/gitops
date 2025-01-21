@@ -1,4 +1,4 @@
-# ingress:
-#   enabled: true
-#   ingressClassName: 'traefik'
-#   # url: 'k3s.local/plex'
+pms:
+  configStorage: 10Gi
+extraEnv:
+  PLEX_CLAIM: "claim-zC6ULGaYbWWTvVugCjfR"
