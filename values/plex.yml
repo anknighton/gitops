@@ -1,0 +1,4 @@
+ingress:
+  enabled: true
+  ingressClassName: 'traefik'
+  url: 'k3s.local/plex'

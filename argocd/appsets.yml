@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: helm-deployments-local
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=default"]
+  generators:
+  - matrix:
+      generators:
+        - list:
+            elements:
+              - cluster: in-cluster
+                url: https://kubernetes.default.svc
+        - git:
+            repoURL: 'git@github.com:anknighton/gitops.git'
+            revision: HEAD
+            files:
+              - path: helm/helm.yml
+  template:
+    metadata:
+      name: '{{.releaseName}}'
+    spec:
+      project: default
+      sources:
+      - repoURL: '{{.repoUrl}}'
+        chart: '{{.chart}}'
+        targetRevision: '{{.version}}'
+        helm:
+          ignoreMissingValueFiles: true
+          releaseName: '{{.releaseName}}'
+          valueFiles:
+          - '$values/values/{{.valueFile}}.yml'
+      - repoURL: 'git@github.com:anknighton/gitops.git'
+        targetRevision: HEAD
+        ref: values
+      destination:
+        namespace: '{{.namespace}}'
+        server: '{{.url}}'
+      syncPolicy:
+        automated:
+          prune: true
+        syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true
