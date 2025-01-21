@@ -3,4 +3,4 @@
   releaseName: plex-media-server
   repoUrl: https://raw.githubusercontent.com/plexinc/pms-docker/gh-pages
   valueFile: plex
-  version: 1.10.0
+  version: 0.8.0
