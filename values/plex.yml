@@ -5,3 +5,11 @@ extraEnv:
   HOSTNAME: "Plex-k8s"
   PLEX_UID: "1000"
   PLEX_GID: "1000"
+extraVolumes:
+  - name: nfs-vol
+    nfs:
+      server: 192.168.1.5 # IP to our NFS server
+      path: /Pool/Media # The exported directory
+extraVolumeMounts:
+  - name: nfs-vol
+    mountPath: /media
