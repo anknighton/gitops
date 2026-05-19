@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-deployments-local
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: ghcr.io/bjw-s-labs/helm
+    chart: app-template
+    targetRevision: 5.0.1
+    helm:
+      ignoreMissingValueFiles: true
+      releaseName: media-stack
+      valueFiles:
+      - '$values/values/media.yml'
+  - repoURL: 'https://github.com/anknighton/gitops'
+    targetRevision: HEAD
+    ref: values
+  destination:
+    namespace: media
+    server: 'https://192.168.1.11:6443'
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

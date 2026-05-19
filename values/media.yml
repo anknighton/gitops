@@ -1,0 +1,60 @@
+global:
+  nameOverride: "media-stack"
+
+defaultPodOptions:
+  nodeSelector:
+    kubernetes.io/hostname=ubuntu
+
+controllers:
+  # ---------------------------------------------------------
+  # 1. PLEX CONTROLLER
+  # ---------------------------------------------------------
+  plex:
+    enabled: true
+    type: deployment
+    pod:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/hostname: "ubuntu" 
+    containers:
+      main:
+        image:
+          repository: lscr.io/linuxserver/plex
+          tag: latest
+        env:
+          TZ: "America/New_York"
+          PLEX_CLAIM: "claim-xxxxxxxxxxxxxxxxx"
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+
+
+persistence:
+  media:                             # 1. The name of this storage definition
+    enabled: true
+    type: hostPath
+    hostPath: "/mnt/media"     # 2. The actual folder on your k3s agent node
+    advancedMounts:
+      plex:                          # 3. Target the 'plex' controller
+        main:                        # 4. Target the 'main' container inside that pod
+          - path: /data/media        # 5. The destination path INSIDE the container
+  configs:
+    enabled: true
+    type: hostPath
+    hostPath: "/mnt/configs"
+    advancedMounts:
+      plex:
+        main:
+          - path: /configs
+            subPath: plex
+  # Transcode in memory
+  transcode:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    advancedMounts:
+      plex:
+        main:
+          - path: /transcode
