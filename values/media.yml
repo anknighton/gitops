@@ -4,6 +4,10 @@ global:
 defaultPodOptions:
   nodeSelector:
     kubernetes.io/hostname: ubuntu
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
 
 controllers:
   # ---------------------------------------------------------
@@ -22,11 +26,8 @@ controllers:
           tag: latest
         env:
           TZ: "America/New_York"
-          PLEX_CLAIM: "claim-xxxxxxxxxxxxxxxxx"
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
+
+
 
 
 persistence:
