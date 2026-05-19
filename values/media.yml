@@ -11,19 +11,30 @@ defaultPodOptions:
 
 controllers:
   # ---------------------------------------------------------
-  #  Jellyseer CONTROLLER
+  #  seerr CONTROLLER
   # ---------------------------------------------------------
-  jellyseer:
+  seerr:
     enabled: true
+    type: deployment
     pod:
       securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: false
+        runAsNonRoot: true
+        privileged: false
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
     containers:
       main: 
         image: 
-          repository: fallenbagel/jellyseerr
+          repository: seerr-team/seerr
           tag: latest
         env:
           TZ: "America/New_York"
@@ -129,8 +140,8 @@ controllers:
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
 # -----------------------------------------------------------------
 service:
-  jellyseer:
-    controller: jellyseer
+  seerr:
+    controller: seerr
     type: LoadBalancer
     ports:
       http:
@@ -188,10 +199,10 @@ persistence:
     type: hostPath
     hostPath: "/mnt/configs"
     advancedMounts:
-      jellyseer:
+      seerr:
         main:
           - path: /app/config
-            subPath: jellyseer
+            subPath: seerr
       plex:
         main:
           - path: /config
