@@ -148,15 +148,6 @@ persistence:
         qbittorrent:
           - path: /config
             subPath: qbittorrent
-  # Transcode in memory
-  transcode:
-    enabled: true
-    type: emptyDir
-    medium: Memory
-    advancedMounts:
-      plex:
-        main:
-          - path: /transcode
   downloads:
     enabled: true
     type: hostPath
@@ -165,3 +156,12 @@ persistence:
       gluetun-stack:                        
         qbittorrent:                      
           - path: /downloads
+    # Transcode in memory
+  transcode:
+    enabled: true
+    type: emptyDir
+    medium: Memory
+    advancedMounts:
+      plex:
+        main:
+          - path: /transcode
