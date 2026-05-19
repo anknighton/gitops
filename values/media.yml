@@ -28,6 +28,7 @@ controllers:
     containers:
       main: 
         image: 
+          registry: ghcr.io
           repository: seerr-team/seerr
           tag: latest
         env:
