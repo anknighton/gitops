@@ -131,10 +131,10 @@ persistence:
       plex:                          # 3. Target the 'plex' controller
         main:                        # 4. Target the 'main' container inside that pod
           - path: /data/media        # 5. The destination path INSIDE the container
-      radarr:
-        main:
-          path: /movies
-          subPath: movies
+      # radarr:
+      #   main:
+      #     path: /movies
+      #     subPath: movies
   configs:
     enabled: true
     type: hostPath
