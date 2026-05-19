@@ -11,7 +11,24 @@ defaultPodOptions:
 
 controllers:
   # ---------------------------------------------------------
-  # 1. PLEX CONTROLLER
+  #  Jellyseer CONTROLLER
+  # ---------------------------------------------------------
+  jellyseer:
+    enabled: true
+    pod:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+    containers:
+      main: 
+        image: 
+          repository: fallenbagel/jellyseerr
+          tag: latest
+        env:
+          TZ: "America/New_York"
+  # ---------------------------------------------------------
+  # PLEX CONTROLLER
   # ---------------------------------------------------------
   plex:
     enabled: true
@@ -28,6 +45,9 @@ controllers:
           TZ: "America/New_York"
           PUID: 1000
           PGID: 1000
+  # ---------------------------------------------------------
+  #  gluetun CONTROLLER
+  # ---------------------------------------------------------
   gluetun-stack:
     enabled: true
     type: deployment
@@ -37,7 +57,6 @@ controllers:
         nameservers:
           - 1.1.1.1 
           - 9.9.9.9
-    
     containers:
       # --- GLUETUN ---
       gluetun:
@@ -68,22 +87,33 @@ controllers:
               secretKeyRef:
                 name: windscribe-creds
                 key: wireguard_preshared_key
-
-      # # --- RADARR ---
-      # radarr:
-      #   image:
-      #     repository: ghcr.io/onedr0p/radarr
-      #     tag: 5.19.3
-      #   env:
-      #     TZ: "America/New_York"
-
-      # # --- SONARR ---
-      # sonarr:
-      #   image:
-      #     repository: ghcr.io/onedr0p/sonarr
-      #     tag: 4.0.13
-      #   env:
-      #     TZ: "America/New_York"
+      # --- Jackett ---
+      jackett:
+        image:
+          repository: linuxserver/jackett
+          tag: latest
+        env:
+          TZ: "America/New_York"
+          PUID: 1000
+          PGID: 1000
+      # --- RADARR ---
+      radarr:
+        image:
+          repository: linuxserver/radarr
+          tag: latest
+        env:
+          TZ: "America/New_York"
+          PUID: 1000
+          PGID: 1000
+      # --- SONARR ---
+      sonarr:
+        image:
+          repository: linuxserver/sonarr
+          tag: latest
+        env:
+          TZ: "America/New_York"
+          PUID: 1000
+          PGID: 1000
       # --- qbittorrent ---
       qbittorrent:
         image:
@@ -99,18 +129,30 @@ controllers:
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
 # -----------------------------------------------------------------
 service:
-  # radarr:
-  #   controller: gluetun-stack
-  #   type: LoadBalancer
-  #   ports:
-  #     http:
-  #       port: 7878
-  # sonarr:
-  #   controller: gluetun-stack
-  #   type: LoadBalancer
-  #   ports:
-  #     http:
-  #       port: 8989
+  jellyseer:
+    controller: jelleyseer
+    type: Loadbalancer
+    ports:
+      http:
+        port: 5055
+  jackett:
+    controller: gluetun-stack
+    type: LoadBalancer
+    ports:
+      http:
+        port: 9117
+  radarr:
+    controller: gluetun-stack
+    type: LoadBalancer
+    ports:
+      http:
+        port: 7878
+  sonarr:
+    controller: gluetun-stack
+    type: LoadBalancer
+    ports:
+      http:
+        port: 8989
   qbittorrent:
     controller: gluetun-stack
     type: LoadBalancer
@@ -134,20 +176,36 @@ persistence:
       plex:                          # 3. Target the 'plex' controller
         main:                        # 4. Target the 'main' container inside that pod
           - path: /data/media        # 5. The destination path INSIDE the container
-      # radarr:
-      #   main:
-      #     path: /movies
-      #     subPath: movies
+      gluetun-stack:  
+        radarr:
+          - path: /movies
+            subPath: movies
+        sonarr:
+          - path: /tv
+            subPath: tv
   configs:
     enabled: true
     type: hostPath
     hostPath: "/mnt/configs"
     advancedMounts:
+      jellyseer:
+        main:
+          - path: /app/config
+            subPath: jellyseer
       plex:
         main:
           - path: /config
             subPath: plex
       gluetun-stack:
+        jackett:
+          - path: /config
+            subPath: jackett
+        radarr:
+          - path: /config
+            subPath: radarr
+        sonarr:
+          - path: /config
+            subPath: sonarr
         qbittorrent:
           - path: /config
             subPath: qbittorrent
@@ -156,7 +214,13 @@ persistence:
     type: hostPath
     hostPath: "/downloads"    
     advancedMounts:
-      gluetun-stack:                        
+      gluetun-stack: 
+        jackett:                      
+          - path: /downloads   
+        radarr:                      
+          - path: /downloads
+        sonarr:                      
+          - path: /downloads                    
         qbittorrent:                      
           - path: /downloads
     # Transcode in memory
