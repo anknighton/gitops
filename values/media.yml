@@ -3,7 +3,7 @@ global:
 
 defaultPodOptions:
   nodeSelector:
-    kubernetes.io/hostname=ubuntu
+    kubernetes.io/hostname: ubuntu
 
 controllers:
   # ---------------------------------------------------------
@@ -15,8 +15,6 @@ controllers:
     pod:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      nodeSelector:
-        kubernetes.io/hostname: "ubuntu" 
     containers:
       main:
         image:
