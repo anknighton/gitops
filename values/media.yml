@@ -130,7 +130,7 @@ controllers:
 # -----------------------------------------------------------------
 service:
   jellyseer:
-    controller: jelleyseer
+    controller: jellyseer
     type: LoadBalancer
     ports:
       http:
