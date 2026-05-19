@@ -131,7 +131,7 @@ controllers:
 service:
   jellyseer:
     controller: jelleyseer
-    type: Loadbalancer
+    type: LoadBalancer
     ports:
       http:
         port: 5055
