@@ -18,13 +18,7 @@ controllers:
     type: deployment
     pod:
       securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        readOnlyRootFilesystem: false
         runAsNonRoot: true
-        privileged: false
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
@@ -38,6 +32,13 @@ controllers:
           tag: latest
         env:
           TZ: "America/New_York"
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
   # ---------------------------------------------------------
   # PLEX CONTROLLER
   # ---------------------------------------------------------
