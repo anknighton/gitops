@@ -28,8 +28,7 @@ controllers:
     containers:
       main: 
         image: 
-          registry: ghcr.io
-          repository: seerr-team/seerr
+          repository: ghcr.io/seerr-team/seerr
           tag: latest
         env:
           TZ: "America/New_York"
