@@ -28,8 +28,98 @@ controllers:
           TZ: "America/New_York"
           PUID: 1000
           PGID: 1000
+  gluetun-stack:
+    enabled: true
+    type: deployment
+    pod:
+      nodeSelector:
+        kubernetes.io/hostname: "ubuntu"
+    
+    containers:
+      # --- GLUETUN ---
+      gluetun:
+        image:
+          repository: qmcgaw/gluetun
+          tag: latest
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        env:
+          - name: VPN_SERVICE_PROVIDER
+            value: "windscribe"
+          - name: VPN_TYPE
+            value: "wireguard"
+          - name: WIREGUARD_ADDRESSES
+            value: "100.76.149.229/32"
+          - name: SERVER_REGIONS
+            value: "Canada East"
+          - name: SERVER_CITIES
+            value: "Toronto"
+          - name: WIREGUARD_PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: windscribe-creds                 
+                key: wireguard_private_key       
+          - name: WIREGUARD_PRESHARED_KEY
+            valueFrom:
+              secretKeyRef:
+                name: windscribe-creds
+                key: wireguard_preshared_key
 
+      # # --- RADARR ---
+      # radarr:
+      #   image:
+      #     repository: ghcr.io/onedr0p/radarr
+      #     tag: 5.19.3
+      #   env:
+      #     TZ: "America/New_York"
 
+      # # --- SONARR ---
+      # sonarr:
+      #   image:
+      #     repository: ghcr.io/onedr0p/sonarr
+      #     tag: 4.0.13
+      #   env:
+      #     TZ: "America/New_York"
+      # --- qbittorrent ---
+      qbittorrent:
+        image:
+          repository: lscr.io/linuxserver/qbittorrent
+          tag: latest
+        env:
+          PUID: 1000
+          PGID: 1000
+          WEBUI_PORT: 8080
+          TZ: "America/New_York"
+
+# -----------------------------------------------------------------
+# SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
+# -----------------------------------------------------------------
+service:
+  # radarr:
+  #   controller: gluetun-stack
+  #   type: LoadBalancer
+  #   ports:
+  #     http:
+  #       port: 7878
+  # sonarr:
+  #   controller: gluetun-stack
+  #   type: LoadBalancer
+  #   ports:
+  #     http:
+  #       port: 8989
+  qbittorrent:
+    controller: gluetun-stack
+    type: LoadBalancer
+    ports:
+      http:
+        port: 8080 
+      torrent-tcp:
+        port: 6881
+        protocol: TCP
+      torrent-udp:
+        port: 6881
+        protocol: UDP
 
 
 persistence:
@@ -41,6 +131,10 @@ persistence:
       plex:                          # 3. Target the 'plex' controller
         main:                        # 4. Target the 'main' container inside that pod
           - path: /data/media        # 5. The destination path INSIDE the container
+      radarr:
+        main:
+          path: /movies
+          subPath: movies
   configs:
     enabled: true
     type: hostPath
@@ -50,6 +144,10 @@ persistence:
         main:
           - path: /config
             subPath: plex
+      gluetun-stack:
+        qbittorrent:
+          - path: /config
+            subPath: qbittorrent
   # Transcode in memory
   transcode:
     enabled: true
@@ -59,3 +157,11 @@ persistence:
       plex:
         main:
           - path: /transcode
+  downloads:
+    enabled: true
+    type: hostPath
+    hostPath: "/downloads"    
+    advancedMounts:
+      gluetun-stack:                        
+        qbittorrent:                      
+          - path: /downloads
