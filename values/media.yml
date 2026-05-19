@@ -32,8 +32,11 @@ controllers:
     enabled: true
     type: deployment
     pod:
-      nodeSelector:
-        kubernetes.io/hostname: "ubuntu"
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1 
+          - 9.9.9.9
     
     containers:
       # --- GLUETUN ---
