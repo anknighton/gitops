@@ -175,6 +175,12 @@ service:
     ports:
       http:
         port: 8989
+  prowlarr:
+    controller: gluetun-stack
+    ype: LoadBalancer
+    ports:
+      http:
+        port: 9696
   qbittorrent:
     controller: gluetun-stack
     type: LoadBalancer
