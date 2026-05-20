@@ -136,6 +136,16 @@ controllers:
           PGID: 1000
           WEBUI_PORT: 8080
           TZ: "America/New_York"
+      # --- qbittorrent ---
+      prowlarr:
+        image:
+          repository: lscr.io/linuxserver/prowlarr
+          tag: latest
+        env:
+          PUID: 1000
+          PGID: 1000
+          WEBUI_PORT: 8080
+          TZ: "America/New_York"
 
 # -----------------------------------------------------------------
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
@@ -221,6 +231,9 @@ persistence:
         qbittorrent:
           - path: /config
             subPath: qbittorrent
+        prowlarr:
+          - path: /config
+            subPath: prowlarr
   downloads:
     enabled: true
     type: hostPath

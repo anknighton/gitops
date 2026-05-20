@@ -1,4 +1,8 @@
 server:
   replicas: 1
+  service:
+    type: LoadBalancer
+    servicePortHttp: 30080
+    servicePortHttps: 30443
 controller:
   replicas: 1
