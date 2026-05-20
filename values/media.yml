@@ -177,7 +177,7 @@ service:
         port: 8989
   prowlarr:
     controller: gluetun-stack
-    ype: LoadBalancer
+    type: LoadBalancer
     ports:
       http:
         port: 9696
