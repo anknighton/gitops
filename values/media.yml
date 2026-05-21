@@ -136,7 +136,7 @@ controllers:
           PGID: 1000
           WEBUI_PORT: 8080
           TZ: "America/New_York"
-      # --- qbittorrent ---
+      # --- prowlarr ---
       prowlarr:
         image:
           repository: lscr.io/linuxserver/prowlarr
@@ -146,6 +146,10 @@ controllers:
           PGID: 1000
           WEBUI_PORT: 8080
           TZ: "America/New_York"
+      # --- byparr ---
+      byparr:
+        image: ghcr.io/theultimatecoder/byparr
+        tag: latest
 
 # -----------------------------------------------------------------
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
@@ -181,6 +185,12 @@ service:
     ports:
       http:
         port: 9696
+  byparr:
+    controller: gluetun-stack
+    type: LoadBalancer
+    ports:
+      http:
+        port: 8191
   qbittorrent:
     controller: gluetun-stack
     type: LoadBalancer
