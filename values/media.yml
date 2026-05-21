@@ -148,8 +148,9 @@ controllers:
           TZ: "America/New_York"
       # --- byparr ---
       byparr:
-        image: ghcr.io/theultimatecoder/byparr
-        tag: latest
+        image: 
+          repository: ghcr.io/theultimatecoder/byparr
+          tag: latest
 
 # -----------------------------------------------------------------
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
