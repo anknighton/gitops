@@ -149,7 +149,7 @@ controllers:
       # --- byparr ---
       byparr:
         image: 
-          repository: ghcr.io/theultimatecoder/byparr
+          repository: ghcr.io/thephaseless/byparr
           tag: latest
 
 # -----------------------------------------------------------------
