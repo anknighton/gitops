@@ -11,6 +11,24 @@ defaultPodOptions:
 
 controllers:
   # ---------------------------------------------------------
+  # Glance CONTROLLER
+  # ---------------------------------------------------------
+  glance:
+    enabled: true
+    type: deployment
+    # pod:
+    #   hostNetwork: true
+    #   dnsPolicy: ClusterFirstWithHostNet
+    containers:
+      main:
+        image:
+          repository: glanceapp/glance
+          tag: latest
+        env:
+          TZ: "America/New_York"
+          PUID: 1000
+          PGID: 1000
+  # ---------------------------------------------------------
   #  seerr CONTROLLER
   # ---------------------------------------------------------
   seerr:
@@ -156,6 +174,12 @@ controllers:
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
 # -----------------------------------------------------------------
 service:
+  glance:
+    controlller: glance
+    type: LoadBalancer
+    ports:
+      http:
+        port: 8081
   seerr:
     controller: seerr
     type: LoadBalancer
@@ -227,6 +251,10 @@ persistence:
     type: hostPath
     hostPath: "/mnt/configs"
     advancedMounts:
+      glance:
+        main:
+          - path: /app/config
+            subPath: glance
       seerr:
         main:
           - path: /app/config
