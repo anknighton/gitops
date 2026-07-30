@@ -16,6 +16,9 @@ controllers:
   glance:
     enabled: true
     type: deployment
+    pod:
+      securityContext:
+        runAsUser: 0          # Runs the container process as root to access the socket
     containers:
       main:
         image:
@@ -24,6 +27,8 @@ controllers:
         ports:
           - name: http
             containerPort: 8080
+        securityContext:
+          privileged: false
         env:
           TZ: "America/New_York"
           PUID: 1000
@@ -35,6 +40,12 @@ controllers:
     enabled: true
     type: deployment
     pod:
+      labels:
+        glance.name: seerr
+        glance.icon: si:seerr
+        glance.url: http://192.168.1.10:5055/
+        glance.description: TBD
+        # glance.id: seerr
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -303,3 +314,11 @@ persistence:
       plex:
         main:
           - path: /transcode
+  dockersock:
+    enabled: true
+    type: hostPath
+    hostPath: "/var/run/docker.sock"
+    advancedMounts:
+      glance:                       # Target the 'glance' controller
+        main:                       # Target the 'main' container
+          - path: /var/run/docker.sock
