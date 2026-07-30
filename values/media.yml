@@ -16,14 +16,14 @@ controllers:
   glance:
     enabled: true
     type: deployment
-    ports:
-      - name: http
-        containerPort: 8080
     containers:
       main:
         image:
           repository: glanceapp/glance
           tag: latest
+        ports:
+          - name: http
+            containerPort: 8080
         env:
           TZ: "America/New_York"
           PUID: 1000
