@@ -175,7 +175,7 @@ controllers:
 # -----------------------------------------------------------------
 service:
   glance:
-    controlller: glance
+    controller: glance
     type: LoadBalancer
     ports:
       http:
