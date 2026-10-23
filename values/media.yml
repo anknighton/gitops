@@ -232,7 +232,7 @@ service:
       http:
         port: 8191
   cleanuparr:
-    controller: cleanuparr
+    controller: gluetun-stack
     type: LoadBalancer
     ports:
       http:
