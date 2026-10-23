@@ -174,6 +174,15 @@ controllers:
         image: 
           repository: ghcr.io/thephaseless/byparr
           tag: latest
+      cleanuparr:
+        image: 
+          repository: ghcr.io/cleanuparr/cleanuparr
+          tag: latest
+        env: 
+          PORT: 11011
+          PUID: 1000
+          PGID: 1000
+          TZ: Etc/UTC
 
 # -----------------------------------------------------------------
 # SERVICE NETWORKING (For Radarr/Sonarr Web UIs)
@@ -222,6 +231,12 @@ service:
     ports:
       http:
         port: 8191
+  cleanuparr:
+    controller: cleanuparr
+    type: LoadBalancer
+    ports:
+      http:
+        port: 11011
   qbittorrent:
     controller: gluetun-stack
     type: LoadBalancer
@@ -285,6 +300,9 @@ persistence:
         prowlarr:
           - path: /config
             subPath: prowlarr
+        cleanuparr:
+         - path: /config
+           subPath: cleanuparr
   downloads:
     enabled: true
     type: hostPath
@@ -299,6 +317,8 @@ persistence:
           - path: /downloads                    
         qbittorrent:                      
           - path: /downloads
+        cleanuparr:
+         - path: /downloads
     # Transcode in memory
   transcode:
     enabled: true
