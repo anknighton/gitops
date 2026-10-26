@@ -80,6 +80,7 @@ controllers:
           TZ: "America/New_York"
           PUID: 1000
           PGID: 1000
+          VERSION: docker
   # ---------------------------------------------------------
   #  gluetun CONTROLLER
   # ---------------------------------------------------------
